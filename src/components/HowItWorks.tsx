@@ -33,7 +33,7 @@ const HowItWorks = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
-            How ReVert Works
+            How CANDO Works
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto">
             From your doorstep to cash in your pocket—we handle everything in between.

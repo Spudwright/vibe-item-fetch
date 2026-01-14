@@ -1,20 +1,30 @@
-import { Recycle, Menu, X, User, Truck } from 'lucide-react';
+import { Recycle, Menu, X, User, LogOut, Plane } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut, loading } = useAuth();
 
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/request', label: 'Request Pickup' },
+    ...(user ? [{ href: '/my-pickups', label: 'My Pickups' }] : []),
     { href: '/driver', label: 'Driver Dashboard' },
     { href: '/terms', label: 'Terms' },
   ];
 
   const isActive = (href: string) => location.pathname === href;
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+    setMobileMenuOpen(false);
+  };
 
   return (
     <header className="sticky top-0 z-50 glass-effect border-b border-border">
@@ -54,13 +64,34 @@ const Header = () => {
 
           {/* Auth Buttons */}
           <div className="hidden md:flex items-center gap-3">
-            <Button variant="ghost" size="sm">
-              <User className="w-4 h-4 mr-1" />
-              Login
-            </Button>
-            <Button variant="eco" size="sm">
-              Get Started
-            </Button>
+            {loading ? (
+              <div className="w-20 h-8 bg-muted animate-pulse rounded-lg" />
+            ) : user ? (
+              <>
+                <Button variant="ghost" size="sm" asChild>
+                  <Link to="/my-pickups">
+                    <Plane className="w-4 h-4 mr-1" />
+                    My Pickups
+                  </Link>
+                </Button>
+                <Button variant="outline" size="sm" onClick={handleSignOut}>
+                  <LogOut className="w-4 h-4 mr-1" />
+                  Sign Out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" size="sm" asChild>
+                  <Link to="/auth">
+                    <User className="w-4 h-4 mr-1" />
+                    Login
+                  </Link>
+                </Button>
+                <Button variant="eco" size="sm" asChild>
+                  <Link to="/auth">Get Started</Link>
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -91,12 +122,21 @@ const Header = () => {
                 </Link>
               ))}
               <div className="flex gap-2 mt-4 pt-4 border-t border-border">
-                <Button variant="ghost" size="sm" className="flex-1">
-                  Login
-                </Button>
-                <Button variant="eco" size="sm" className="flex-1">
-                  Get Started
-                </Button>
+                {user ? (
+                  <Button variant="outline" size="sm" className="flex-1" onClick={handleSignOut}>
+                    <LogOut className="w-4 h-4 mr-1" />
+                    Sign Out
+                  </Button>
+                ) : (
+                  <>
+                    <Button variant="ghost" size="sm" className="flex-1" asChild>
+                      <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>Login</Link>
+                    </Button>
+                    <Button variant="eco" size="sm" className="flex-1" asChild>
+                      <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>Get Started</Link>
+                    </Button>
+                  </>
+                )}
               </div>
             </nav>
           </div>

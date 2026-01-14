@@ -14,16 +14,184 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      assignments: {
+        Row: {
+          active: boolean
+          created_at: string
+          driver_id: string
+          drone_id: string
+          id: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          driver_id: string
+          drone_id: string
+          id?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          driver_id?: string
+          drone_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assignments_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignments_drone_id_fkey"
+            columns: ["drone_id"]
+            isOneToOne: false
+            referencedRelation: "drones"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      drones: {
+        Row: {
+          created_at: string
+          id: string
+          last_updated: string | null
+          lat: number | null
+          lng: number | null
+          name: string
+          status: Database["public"]["Enums"]["drone_status"]
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_updated?: string | null
+          lat?: number | null
+          lng?: number | null
+          name: string
+          status?: Database["public"]["Enums"]["drone_status"]
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_updated?: string | null
+          lat?: number | null
+          lng?: number | null
+          name?: string
+          status?: Database["public"]["Enums"]["drone_status"]
+        }
+        Relationships: []
+      }
+      pickups: {
+        Row: {
+          created_at: string
+          drone_id: string | null
+          estimated_crv: number | null
+          id: string
+          items: Json | null
+          pickup_address: string
+          pickup_lat: number | null
+          pickup_lng: number | null
+          status: Database["public"]["Enums"]["pickup_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          drone_id?: string | null
+          estimated_crv?: number | null
+          id?: string
+          items?: Json | null
+          pickup_address: string
+          pickup_lat?: number | null
+          pickup_lng?: number | null
+          status?: Database["public"]["Enums"]["pickup_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          drone_id?: string | null
+          estimated_crv?: number | null
+          id?: string
+          items?: Json | null
+          pickup_address?: string
+          pickup_lat?: number | null
+          pickup_lng?: number | null
+          status?: Database["public"]["Enums"]["pickup_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pickups_drone_id_fkey"
+            columns: ["drone_id"]
+            isOneToOne: false
+            referencedRelation: "drones"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pickups_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          crv_balance: number
+          email: string | null
+          full_name: string | null
+          id: string
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          crv_balance?: number
+          email?: string | null
+          full_name?: string | null
+          id: string
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          crv_balance?: number
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_role: {
+        Args: never
+        Returns: Database["public"]["Enums"]["user_role"]
+      }
+      is_admin: { Args: never; Returns: boolean }
+      is_assigned_driver: { Args: { drone_uuid: string }; Returns: boolean }
+      is_assigned_user: { Args: { drone_uuid: string }; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      drone_status: "idle" | "active" | "maintenance"
+      pickup_status:
+        | "pending"
+        | "assigned"
+        | "in_transit"
+        | "completed"
+        | "cancelled"
+      user_role: "user" | "driver" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +318,16 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      drone_status: ["idle", "active", "maintenance"],
+      pickup_status: [
+        "pending",
+        "assigned",
+        "in_transit",
+        "completed",
+        "cancelled",
+      ],
+      user_role: ["user", "driver", "admin"],
+    },
   },
 } as const

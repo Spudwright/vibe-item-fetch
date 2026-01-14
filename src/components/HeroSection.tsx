@@ -38,17 +38,11 @@ const HeroSection = () => {
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16 animate-fade-in">
+          <div className="flex justify-center mb-16 animate-fade-in">
             <Link to="/request">
-              <Button variant="eco" size="xl" className="w-full sm:w-auto">
+              <Button variant="eco" size="xl">
                 Schedule a Pickup
                 <ArrowRight className="w-5 h-5" />
-              </Button>
-            </Link>
-            <Link to="/driver">
-              <Button variant="outline" size="xl" className="w-full sm:w-auto">
-                <Truck className="w-5 h-5" />
-                Become a Driver
               </Button>
             </Link>
           </div>

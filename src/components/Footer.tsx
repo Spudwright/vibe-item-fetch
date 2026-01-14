@@ -12,14 +12,9 @@ const Footer = () => {
               <div className="w-10 h-10 eco-gradient rounded-xl flex items-center justify-center shadow-eco">
                 <Recycle className="w-6 h-6 text-primary-foreground" />
               </div>
-              <div className="flex flex-col">
-                <span className="font-display font-bold text-lg text-foreground leading-tight">
-                  ReVert
-                </span>
-                <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
-                  LA Recycling
-                </span>
-              </div>
+              <span className="font-display font-bold text-xl text-foreground">
+                CANDO
+              </span>
             </Link>
             <p className="text-sm text-muted-foreground mb-4 max-w-sm">
               Turning LA's recyclables into cash, one pickup at a time. 
@@ -64,7 +59,7 @@ const Footer = () => {
             <ul className="space-y-2 text-sm">
               <li className="flex items-center gap-2 text-muted-foreground">
                 <Mail className="w-4 h-4 text-primary" />
-                hello@revert.la
+                hello@cando.la
               </li>
               <li className="flex items-center gap-2 text-muted-foreground">
                 <Phone className="w-4 h-4 text-primary" />
@@ -76,7 +71,7 @@ const Footer = () => {
 
         {/* Bottom */}
         <div className="mt-12 pt-6 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-          <p>© 2024 ReVert LA. All rights reserved.</p>
+          <p>© 2024 CANDO. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <Link to="/terms" className="hover:text-primary transition-colors">
               Terms

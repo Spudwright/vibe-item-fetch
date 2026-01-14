@@ -35,14 +35,9 @@ const Header = () => {
             <div className="w-10 h-10 eco-gradient rounded-xl flex items-center justify-center shadow-eco group-hover:shadow-elevated transition-shadow">
               <Recycle className="w-6 h-6 text-primary-foreground" />
             </div>
-            <div className="flex flex-col">
-              <span className="font-display font-bold text-lg text-foreground leading-tight">
-                ReVert
-              </span>
-              <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
-                LA Recycling
-              </span>
-            </div>
+            <span className="font-display font-bold text-xl text-foreground">
+              CANDO
+            </span>
           </Link>
 
           {/* Desktop Nav */}

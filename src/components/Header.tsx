@@ -1,4 +1,5 @@
-import { Recycle, Menu, X, User, LogOut, Plane } from 'lucide-react';
+import { Recycle, Menu, X, User, LogOut } from 'lucide-react';
+import DeliveryRobotIcon from '@/components/icons/DeliveryRobotIcon';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -65,7 +66,7 @@ const Header = () => {
               <>
                 <Button variant="ghost" size="sm" asChild>
                   <Link to="/my-pickups">
-                    <Plane className="w-4 h-4 mr-1" />
+                    <DeliveryRobotIcon size={16} className="mr-1" />
                     My Pickups
                   </Link>
                 </Button>

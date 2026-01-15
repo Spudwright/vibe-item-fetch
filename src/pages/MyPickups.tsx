@@ -8,7 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Package, MapPin, DollarSign, Clock, Plane, Eye, Plus } from 'lucide-react';
+import { Package, MapPin, DollarSign, Clock, Eye, Plus } from 'lucide-react';
+import DeliveryRobotIcon from '@/components/icons/DeliveryRobotIcon';
 import { useToast } from '@/hooks/use-toast';
 
 interface Pickup {
@@ -194,7 +195,7 @@ const MyPickups = () => {
             <CardContent className="pt-6">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 terracotta-gradient rounded-xl flex items-center justify-center">
-                  <Plane className="w-6 h-6 text-primary-foreground" />
+                  <DeliveryRobotIcon size={24} color="white" />
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Total Pickups</p>
@@ -279,8 +280,8 @@ const MyPickups = () => {
                             size="sm"
                             onClick={() => navigate(`/track/${pickup.id}`)}
                           >
-                            <Plane className="w-4 h-4 mr-1" />
-                            Track Drone
+                            <DeliveryRobotIcon size={16} className="mr-1" />
+                            Track Robot
                           </Button>
                         )}
                         <Button

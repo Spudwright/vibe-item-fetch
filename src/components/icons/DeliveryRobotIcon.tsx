@@ -5,13 +5,15 @@ interface DeliveryRobotIconProps {
   className?: string;
   color?: string;
   animated?: boolean;
+  bouncing?: boolean;
 }
 
 const DeliveryRobotIcon: React.FC<DeliveryRobotIconProps> = ({ 
   size = 24, 
   className = '',
   color = 'currentColor',
-  animated = false
+  animated = false,
+  bouncing = false
 }) => {
   return (
     <svg 
@@ -24,7 +26,7 @@ const DeliveryRobotIcon: React.FC<DeliveryRobotIconProps> = ({
       strokeWidth="2" 
       strokeLinecap="round" 
       strokeLinejoin="round"
-      className={className}
+      className={`${className} ${bouncing ? 'animate-bounce' : ''}`}
     >
       <style>
         {`

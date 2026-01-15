@@ -19,6 +19,8 @@ import {
 } from '@/lib/crv-utils';
 import { useToast } from '@/hooks/use-toast';
 
+const MINIMUM_ITEMS = 25; // Minimum number of cans/bottles required for pickup
+
 const RequestPickup = () => {
   const { toast } = useToast();
   const [items, setItems] = useState<CRVItem[]>([
@@ -78,8 +80,21 @@ const RequestPickup = () => {
     }, 2000);
   };
 
+  // Calculate total quantity of items
+  const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Check minimum quantity requirement
+    if (totalQuantity < MINIMUM_ITEMS) {
+      toast({
+        variant: "destructive",
+        title: "Minimum Not Met",
+        description: `You need at least ${MINIMUM_ITEMS} items for a pickup. You currently have ${totalQuantity}.`,
+      });
+      return;
+    }
     
     if (!consentLocation || !agreeTerms) {
       toast({
@@ -251,6 +266,16 @@ const RequestPickup = () => {
                   Add More Items
                 </Button>
 
+                {/* Minimum quantity notice */}
+                {totalQuantity < MINIMUM_ITEMS && (
+                  <div className="mt-4 p-3 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+                    <p className="text-sm text-amber-700 dark:text-amber-300">
+                      Minimum {MINIMUM_ITEMS} items required. You have <strong>{totalQuantity}</strong> — need <strong>{MINIMUM_ITEMS - totalQuantity}</strong> more.
+                    </p>
+                  </div>
+                )}
+
                 {/* Estimate */}
                 <div className="mt-6 p-4 rounded-xl gold-gradient">
                   <div className="flex justify-between items-center">
@@ -263,6 +288,7 @@ const RequestPickup = () => {
                     <div className="text-right text-xs text-foreground/70">
                       <p>Full CRV: {formatCurrency(fullCRV)}</p>
                       <p>Fee: {(feeRate * 100).toFixed(0)}%</p>
+                      <p>Items: {totalQuantity}/{MINIMUM_ITEMS} min</p>
                     </div>
                   </div>
                 </div>

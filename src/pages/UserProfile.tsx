@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Settings, LogOut, ChevronRight, Trophy, Target, Flame } from 'lucide-react';
+import { User, Settings, LogOut, ChevronRight, Trophy, Target, Flame, Heart } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -212,6 +212,17 @@ const UserProfile = () => {
                 <span className="flex items-center gap-2">
                   <Flame className="w-4 h-4" />
                   My Pickups
+                </span>
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full justify-between text-primary hover:text-primary"
+                onClick={() => navigate('/donate')}
+              >
+                <span className="flex items-center gap-2">
+                  <Heart className="w-4 h-4" />
+                  Donate to Charity
                 </span>
                 <ChevronRight className="w-4 h-4" />
               </Button>

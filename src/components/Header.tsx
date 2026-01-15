@@ -1,4 +1,4 @@
-import { Recycle, Menu, X, User, LogOut, Trophy } from 'lucide-react';
+import { Recycle, Menu, X, User, LogOut, Trophy, Heart } from 'lucide-react';
 import DeliveryRobotIcon from '@/components/icons/DeliveryRobotIcon';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -16,6 +16,7 @@ const Header = () => {
     { href: '/request', label: 'Request Pickup' },
     ...(user ? [
       { href: '/my-pickups', label: 'My Pickups' },
+      { href: '/donate', label: 'Donate' },
       { href: '/profile', label: 'Profile' },
     ] : []),
     { href: '/driver', label: 'Driver Dashboard' },

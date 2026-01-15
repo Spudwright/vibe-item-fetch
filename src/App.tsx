@@ -11,6 +11,7 @@ import MyPickups from "./pages/MyPickups";
 import TrackPickup from "./pages/TrackPickup";
 import DriverDashboard from "./pages/DriverDashboard";
 import UserProfile from "./pages/UserProfile";
+import Donate from "./pages/Donate";
 import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
 
@@ -31,6 +32,7 @@ const App = () => (
             <Route path="/track/:pickupId" element={<TrackPickup />} />
             <Route path="/driver" element={<DriverDashboard />} />
             <Route path="/profile" element={<UserProfile />} />
+            <Route path="/donate" element={<Donate />} />
             <Route path="/terms" element={<Terms />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

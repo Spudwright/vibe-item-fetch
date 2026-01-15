@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ScanLine, Plus, Trash2, MapPin, CheckCircle2, AlertCircle } from 'lucide-react';
+import { ScanLine, Plus, Trash2, MapPin, CheckCircle2, AlertCircle, Zap } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -17,7 +17,9 @@ import {
   type CRVItem,
   type MaterialType,
 } from '@/lib/crv-utils';
+import { calculateItemPoints, formatPoints } from '@/lib/gamification';
 import { useToast } from '@/hooks/use-toast';
+import PointsBreakdown from '@/components/PointsBreakdown';
 
 const MINIMUM_ITEMS = 25; // Minimum number of cans/bottles required for pickup
 
@@ -134,6 +136,11 @@ const RequestPickup = () => {
 
   const fullCRV = calculateFullCRV(items);
   const { payout, feeRate } = calculateUserPayout(fullCRV, 0); // Assuming new user
+  
+  // Calculate total points for this pickup
+  const totalPoints = items.reduce((sum, item) => {
+    return sum + calculateItemPoints(item.materialType, item.sizeOz, item.quantity);
+  }, 0);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -276,7 +283,7 @@ const RequestPickup = () => {
                   </div>
                 )}
 
-                {/* Estimate */}
+                {/* Estimate with Points */}
                 <div className="mt-6 p-4 rounded-xl gold-gradient">
                   <div className="flex justify-between items-center">
                     <div>
@@ -291,8 +298,21 @@ const RequestPickup = () => {
                       <p>Items: {totalQuantity}/{MINIMUM_ITEMS} min</p>
                     </div>
                   </div>
+                  {/* Points Preview */}
+                  <div className="mt-3 pt-3 border-t border-foreground/10 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Zap className="w-4 h-4 text-amber-500" />
+                      <span className="text-sm font-medium">Points You'll Earn</span>
+                    </div>
+                    <span className="text-lg font-bold text-amber-600 dark:text-amber-400">
+                      +{formatPoints(totalPoints)} XP
+                    </span>
+                  </div>
                 </div>
               </div>
+
+              {/* Points Breakdown Section */}
+              <PointsBreakdown items={items} />
 
               {/* Address Section */}
               <div className="bg-card rounded-2xl shadow-card p-6">

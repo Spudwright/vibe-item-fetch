@@ -1,4 +1,4 @@
-import { Recycle, Menu, X, User, LogOut } from 'lucide-react';
+import { Recycle, Menu, X, User, LogOut, Trophy } from 'lucide-react';
 import DeliveryRobotIcon from '@/components/icons/DeliveryRobotIcon';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,10 @@ const Header = () => {
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/request', label: 'Request Pickup' },
-    ...(user ? [{ href: '/my-pickups', label: 'My Pickups' }] : []),
+    ...(user ? [
+      { href: '/my-pickups', label: 'My Pickups' },
+      { href: '/profile', label: 'Profile' },
+    ] : []),
     { href: '/driver', label: 'Driver Dashboard' },
     { href: '/terms', label: 'Terms' },
   ];
@@ -65,9 +68,9 @@ const Header = () => {
             ) : user ? (
               <>
                 <Button variant="ghost" size="sm" asChild>
-                  <Link to="/my-pickups">
-                    <DeliveryRobotIcon size={16} className="mr-1" />
-                    My Pickups
+                  <Link to="/profile">
+                    <Trophy className="w-4 h-4 mr-1" />
+                    Profile
                   </Link>
                 </Button>
                 <Button variant="outline" size="sm" onClick={handleSignOut}>
@@ -119,10 +122,18 @@ const Header = () => {
               ))}
               <div className="flex gap-2 mt-4 pt-4 border-t border-border">
                 {user ? (
-                  <Button variant="outline" size="sm" className="flex-1" onClick={handleSignOut}>
-                    <LogOut className="w-4 h-4 mr-1" />
-                    Sign Out
-                  </Button>
+                  <>
+                    <Button variant="ghost" size="sm" className="flex-1" asChild>
+                      <Link to="/profile" onClick={() => setMobileMenuOpen(false)}>
+                        <Trophy className="w-4 h-4 mr-1" />
+                        Profile
+                      </Link>
+                    </Button>
+                    <Button variant="outline" size="sm" className="flex-1" onClick={handleSignOut}>
+                      <LogOut className="w-4 h-4 mr-1" />
+                      Sign Out
+                    </Button>
+                  </>
                 ) : (
                   <>
                     <Button variant="ghost" size="sm" className="flex-1" asChild>

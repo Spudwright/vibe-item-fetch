@@ -10,6 +10,7 @@ import RequestPickup from "./pages/RequestPickup";
 import MyPickups from "./pages/MyPickups";
 import TrackPickup from "./pages/TrackPickup";
 import DriverDashboard from "./pages/DriverDashboard";
+import UserProfile from "./pages/UserProfile";
 import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
 
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/my-pickups" element={<MyPickups />} />
             <Route path="/track/:pickupId" element={<TrackPickup />} />
             <Route path="/driver" element={<DriverDashboard />} />
+            <Route path="/profile" element={<UserProfile />} />
             <Route path="/terms" element={<Terms />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

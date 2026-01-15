@@ -8,7 +8,8 @@ import DroneMap from '@/components/DroneMap';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Plane, MapPin, Clock, DollarSign, ArrowLeft, Package } from 'lucide-react';
+import { MapPin, Clock, DollarSign, ArrowLeft, Package } from 'lucide-react';
+import DeliveryRobotIcon from '@/components/icons/DeliveryRobotIcon';
 import { useToast } from '@/hooks/use-toast';
 
 interface Pickup {
@@ -205,8 +206,8 @@ const TrackPickup = () => {
             <Card className="h-[500px]">
               <CardHeader className="pb-2">
                 <CardTitle className="flex items-center gap-2">
-                  <Plane className="w-5 h-5 text-primary" />
-                  Live Drone Tracking
+                  <DeliveryRobotIcon size={20} className="text-primary" />
+                  Live Robot Tracking
                 </CardTitle>
               </CardHeader>
               <CardContent className="h-[calc(100%-60px)]">
@@ -220,10 +221,10 @@ const TrackPickup = () => {
                 ) : (
                   <div className="h-full flex items-center justify-center bg-muted rounded-lg">
                     <div className="text-center p-6">
-                      <Plane className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                      <DeliveryRobotIcon size={48} className="text-muted-foreground mx-auto mb-4" />
                       <p className="text-muted-foreground">
                         {pickup.status === 'pending' 
-                          ? 'Waiting for a drone to be assigned...'
+                          ? 'Waiting for a robot to be assigned...'
                           : pickup.status === 'completed'
                           ? 'Pickup completed!'
                           : 'Tracking not available for this status.'}
@@ -299,12 +300,12 @@ const TrackPickup = () => {
             {/* Drone Info */}
             {drone && (
               <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Plane className="w-4 h-4" />
-                    Assigned Drone
-                  </CardTitle>
-                </CardHeader>
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <DeliveryRobotIcon size={16} />
+                  Assigned Robot
+                </CardTitle>
+              </CardHeader>
                 <CardContent>
                   <p className="font-medium">{drone.name}</p>
                   {drone.last_updated && (

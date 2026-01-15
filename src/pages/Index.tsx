@@ -3,6 +3,7 @@ import HeroSection from '@/components/HeroSection';
 import HowItWorks from '@/components/HowItWorks';
 import DroneTrackingPreview from '@/components/DroneTrackingPreview';
 import CRVRatesCard from '@/components/CRVRatesCard';
+import PointsBreakdown from '@/components/PointsBreakdown';
 import CRVCalculator from '@/components/CRVCalculator';
 import Footer from '@/components/Footer';
 
@@ -15,10 +16,16 @@ const Index = () => {
         <HowItWorks />
         <DroneTrackingPreview />
         
-        {/* CRV Rates Section */}
+        {/* CRV Rates & Points Section */}
         <section className="py-12 px-4 bg-muted/30">
-          <div className="container max-w-2xl mx-auto">
-            <CRVRatesCard />
+          <div className="container max-w-4xl mx-auto">
+            <h2 className="font-display text-2xl md:text-3xl font-bold text-center mb-8">
+              Earn Cash <span className="text-primary">&</span> Level Up
+            </h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              <CRVRatesCard />
+              <PointsBreakdown showRates={true} />
+            </div>
           </div>
         </section>
         

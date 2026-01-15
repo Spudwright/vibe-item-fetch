@@ -93,6 +93,7 @@ export type Database = {
           pickup_address: string
           pickup_lat: number | null
           pickup_lng: number | null
+          points_earned: number | null
           status: Database["public"]["Enums"]["pickup_status"]
           updated_at: string
           user_id: string
@@ -106,6 +107,7 @@ export type Database = {
           pickup_address: string
           pickup_lat?: number | null
           pickup_lng?: number | null
+          points_earned?: number | null
           status?: Database["public"]["Enums"]["pickup_status"]
           updated_at?: string
           user_id: string
@@ -119,6 +121,7 @@ export type Database = {
           pickup_address?: string
           pickup_lat?: number | null
           pickup_lng?: number | null
+          points_earned?: number | null
           status?: Database["public"]["Enums"]["pickup_status"]
           updated_at?: string
           user_id?: string
@@ -144,28 +147,40 @@ export type Database = {
         Row: {
           created_at: string
           crv_balance: number
+          current_xp: number
           email: string | null
           full_name: string | null
           id: string
+          level: number
           role: Database["public"]["Enums"]["user_role"]
+          total_items_recycled: number
+          total_points: number
           updated_at: string
         }
         Insert: {
           created_at?: string
           crv_balance?: number
+          current_xp?: number
           email?: string | null
           full_name?: string | null
           id: string
+          level?: number
           role?: Database["public"]["Enums"]["user_role"]
+          total_items_recycled?: number
+          total_points?: number
           updated_at?: string
         }
         Update: {
           created_at?: string
           crv_balance?: number
+          current_xp?: number
           email?: string | null
           full_name?: string | null
           id?: string
+          level?: number
           role?: Database["public"]["Enums"]["user_role"]
+          total_items_recycled?: number
+          total_points?: number
           updated_at?: string
         }
         Relationships: []

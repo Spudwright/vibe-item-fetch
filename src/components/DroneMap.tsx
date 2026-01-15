@@ -12,6 +12,7 @@ interface DroneMapProps {
   onMapReady?: () => void;
   mapboxToken?: string;
   onTokenSubmit?: (token: string) => void;
+  hasArrived?: boolean;
 }
 
 const DroneMap = ({ 
@@ -19,7 +20,8 @@ const DroneMap = ({
   pickupLocation, 
   onMapReady,
   mapboxToken,
-  onTokenSubmit 
+  onTokenSubmit,
+  hasArrived = false
 }: DroneMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
@@ -73,32 +75,44 @@ const DroneMap = ({
       // Create drone marker with custom element
       const el = document.createElement('div');
       el.className = 'drone-marker';
+      droneMarker.current = new mapboxgl.Marker(el)
+        .setLngLat([droneLocation.lng, droneLocation.lat])
+        .addTo(map.current);
+    }
+
+    // Update marker HTML based on arrival state
+    if (droneMarker.current) {
+      const el = droneMarker.current.getElement();
+      const bounceClass = hasArrived ? 'animate-bounce' : '';
+      const wheelAnimation = hasArrived ? '' : `
+        .wheel-spin-left {
+          animation: wheelSpin 0.4s linear infinite;
+          transform-origin: 7px 19px;
+        }
+        .wheel-spin-right {
+          animation: wheelSpin 0.4s linear infinite;
+          transform-origin: 17px 19px;
+        }
+      `;
       el.innerHTML = `
         <style>
           @keyframes wheelSpin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
           }
-          .wheel-spin-left {
-            animation: wheelSpin 0.4s linear infinite;
-            transform-origin: 7px 19px;
-          }
-          .wheel-spin-right {
-            animation: wheelSpin 0.4s linear infinite;
-            transform-origin: 17px 19px;
-          }
+          ${wheelAnimation}
         </style>
-        <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg animate-pulse">
+        <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg ${bounceClass}">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="4" y="6" width="16" height="10" rx="2" ry="2" />
             <rect x="10" y="2" width="4" height="4" rx="1" />
             <circle cx="9" cy="11" r="1.5" fill="white" />
             <circle cx="15" cy="11" r="1.5" fill="white" />
-            <g class="wheel-spin-left">
+            <g class="${hasArrived ? '' : 'wheel-spin-left'}">
               <circle cx="7" cy="19" r="2" />
               <line x1="7" y1="17" x2="7" y2="19" stroke-width="1.5" />
             </g>
-            <g class="wheel-spin-right">
+            <g class="${hasArrived ? '' : 'wheel-spin-right'}">
               <circle cx="17" cy="19" r="2" />
               <line x1="17" y1="17" x2="17" y2="19" stroke-width="1.5" />
             </g>
@@ -107,19 +121,15 @@ const DroneMap = ({
           </svg>
         </div>
       `;
-      
-      droneMarker.current = new mapboxgl.Marker(el)
-        .setLngLat([droneLocation.lng, droneLocation.lat])
-        .addTo(map.current);
     }
-
+      
     // Fly to drone location
     map.current.flyTo({
       center: [droneLocation.lng, droneLocation.lat],
       zoom: 15,
       duration: 1000
     });
-  }, [droneLocation, isMapInitialized]);
+  }, [droneLocation, isMapInitialized, hasArrived]);
 
   // Update pickup marker
   useEffect(() => {

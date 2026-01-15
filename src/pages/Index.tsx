@@ -2,6 +2,7 @@ import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
 import HowItWorks from '@/components/HowItWorks';
 import DroneTrackingPreview from '@/components/DroneTrackingPreview';
+import CRVRatesCard from '@/components/CRVRatesCard';
 import CRVCalculator from '@/components/CRVCalculator';
 import Footer from '@/components/Footer';
 
@@ -13,6 +14,14 @@ const Index = () => {
         <HeroSection />
         <HowItWorks />
         <DroneTrackingPreview />
+        
+        {/* CRV Rates Section */}
+        <section className="py-12 px-4 bg-muted/30">
+          <div className="container max-w-2xl mx-auto">
+            <CRVRatesCard />
+          </div>
+        </section>
+        
         <CRVCalculator />
       </main>
       <Footer />

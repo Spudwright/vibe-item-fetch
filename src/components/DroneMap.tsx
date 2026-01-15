@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import confetti from 'canvas-confetti';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -29,6 +30,39 @@ const DroneMap = ({
   const pickupMarker = useRef<mapboxgl.Marker | null>(null);
   const [tokenInput, setTokenInput] = useState('');
   const [isMapInitialized, setIsMapInitialized] = useState(false);
+  const hasShownConfetti = useRef(false);
+
+  // Trigger confetti when robot arrives
+  useEffect(() => {
+    if (hasArrived && !hasShownConfetti.current) {
+      hasShownConfetti.current = true;
+      
+      // Fire confetti from both sides
+      const fireConfetti = () => {
+        // Left side burst
+        confetti({
+          particleCount: 80,
+          spread: 70,
+          origin: { x: 0.2, y: 0.6 },
+          colors: ['#22c55e', '#16a34a', '#4ade80', '#86efac', '#fbbf24'],
+        });
+        
+        // Right side burst
+        confetti({
+          particleCount: 80,
+          spread: 70,
+          origin: { x: 0.8, y: 0.6 },
+          colors: ['#22c55e', '#16a34a', '#4ade80', '#86efac', '#fbbf24'],
+        });
+      };
+
+      // Initial burst
+      fireConfetti();
+      
+      // Second burst after a short delay
+      setTimeout(fireConfetti, 200);
+    }
+  }, [hasArrived]);
 
   // Initialize map when token is available
   useEffect(() => {

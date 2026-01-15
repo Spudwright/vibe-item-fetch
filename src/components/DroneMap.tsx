@@ -74,9 +74,16 @@ const DroneMap = ({
       const el = document.createElement('div');
       el.className = 'drone-marker';
       el.innerHTML = `
-        <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center shadow-lg animate-pulse">
+        <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg animate-pulse">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>
+            <rect x="4" y="6" width="16" height="10" rx="2" ry="2" />
+            <rect x="10" y="2" width="4" height="4" rx="1" />
+            <circle cx="9" cy="11" r="1.5" fill="white" />
+            <circle cx="15" cy="11" r="1.5" fill="white" />
+            <circle cx="7" cy="19" r="2" />
+            <circle cx="17" cy="19" r="2" />
+            <line x1="7" y1="16" x2="7" y2="17" />
+            <line x1="17" y1="16" x2="17" y2="17" />
           </svg>
         </div>
       `;

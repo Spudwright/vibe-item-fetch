@@ -1,15 +1,29 @@
-import { Recycle, Menu, X, User, LogOut, Trophy, Heart } from 'lucide-react';
+import { Recycle, Menu, X, User, LogOut, Trophy, Heart, ShieldCheck } from 'lucide-react';
 import DeliveryRobotIcon from '@/components/icons/DeliveryRobotIcon';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, signOut, loading } = useAuth();
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      if (!user) {
+        setIsAdmin(false);
+        return;
+      }
+      const { data } = await supabase.rpc('is_admin');
+      setIsAdmin(!!data);
+    };
+    checkAdmin();
+  }, [user]);
 
   const navLinks = [
     { href: '/', label: 'Home' },
@@ -20,6 +34,7 @@ const Header = () => {
       { href: '/profile', label: 'Profile' },
     ] : []),
     { href: '/driver', label: 'Driver Dashboard' },
+    ...(isAdmin ? [{ href: '/admin', label: 'Admin' }] : []),
     { href: '/terms', label: 'Terms' },
   ];
 

@@ -27,6 +27,7 @@ const Header = () => {
 
   const navLinks = [
     { href: '/', label: 'Home' },
+    { href: '/scan', label: 'Scan' },
     { href: '/request', label: 'Request Pickup' },
     ...(user ? [
       { href: '/my-pickups', label: 'My Pickups' },

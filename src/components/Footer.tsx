@@ -13,7 +13,7 @@ const Footer = () => {
                 <Recycle className="w-6 h-6 text-primary-foreground" />
               </div>
               <span className="font-display font-bold text-xl text-foreground">
-                CANDO
+                CanDo
               </span>
             </Link>
             <p className="text-sm text-muted-foreground mb-4 max-w-sm">

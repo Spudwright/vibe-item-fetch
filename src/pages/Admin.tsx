@@ -301,7 +301,7 @@ const Admin = () => {
                   Admin Dashboard
                 </h1>
                 <p className="text-muted-foreground">
-                  CANDO Recycling Analytics & Statistics
+                  CanDo Recycling Analytics & Statistics
                 </p>
               </div>
             </div>

@@ -38,7 +38,7 @@ const DroneTrackingPreview = () => {
               </h2>
               
               <p className="text-lg text-muted-foreground mb-8">
-                Watch your CANDO ground drone navigate to your location. Get live updates on arrival time and pickup status—all from your phone.
+                Watch your CanDo ground drone navigate to your location. Get live updates on arrival time and pickup status—all from your phone.
               </p>
 
               <div className="space-y-4 mb-8">

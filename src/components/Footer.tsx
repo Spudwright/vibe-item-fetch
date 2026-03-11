@@ -13,7 +13,7 @@ const Footer = () => {
                 <Recycle className="w-6 h-6 text-primary-foreground" />
               </div>
               <span className="font-display font-bold text-xl text-foreground">
-                CANDO
+                CanDo
               </span>
             </Link>
             <p className="text-sm text-muted-foreground mb-4 max-w-sm">
@@ -71,7 +71,7 @@ const Footer = () => {
 
         {/* Bottom */}
         <div className="mt-12 pt-6 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-          <p>© 2024 CANDO. All rights reserved.</p>
+          <p>© 2024 CanDo. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <Link to="/terms" className="hover:text-primary transition-colors">
               Terms

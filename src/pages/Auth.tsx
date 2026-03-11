@@ -130,7 +130,7 @@ const Auth = () => {
           <div className="mx-auto w-14 h-14 eco-gradient rounded-2xl flex items-center justify-center shadow-eco mb-4">
             <Recycle className="w-8 h-8 text-primary-foreground" />
           </div>
-          <CardTitle className="font-display text-2xl">Welcome to ReVert</CardTitle>
+          <CardTitle className="font-display text-2xl">Welcome to CanDo</CardTitle>
           <CardDescription>
             Sign in to track your pickups and CRV earnings
           </CardDescription>

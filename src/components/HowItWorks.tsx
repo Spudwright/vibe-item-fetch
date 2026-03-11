@@ -10,7 +10,7 @@ const steps = [
   {
     icon: Truck,
     title: 'We Collect',
-    description: 'A verified driver comes to your location and picks up your recyclables.',
+    description: 'An autonomous driving vehicle comes to your location and collects your containers.',
     color: 'bg-secondary/20 text-secondary-foreground',
   },
   {

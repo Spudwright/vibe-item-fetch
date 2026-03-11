@@ -1,4 +1,4 @@
-import { Recycle, Menu, X, User, LogOut, Trophy, Heart, ShieldCheck } from 'lucide-react';
+import { Recycle, Menu, X, User, LogOut, Trophy, Heart, ShieldCheck, ScanLine } from 'lucide-react';
 import DeliveryRobotIcon from '@/components/icons/DeliveryRobotIcon';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
@@ -27,6 +27,7 @@ const Header = () => {
 
   const navLinks = [
     { href: '/', label: 'Home' },
+    { href: '/scan', label: 'Scan' },
     { href: '/request', label: 'Request Pickup' },
     ...(user ? [
       { href: '/my-pickups', label: 'My Pickups' },

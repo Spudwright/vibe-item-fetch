@@ -109,8 +109,8 @@ const Auth = () => {
       }
     } else {
       toast({
-        title: 'Account created!',
-        description: 'You can now track your pickups and CRV balance.',
+        title: 'Check your email!',
+        description: 'We sent you a confirmation link. Please verify your email to complete signup.',
       });
     }
   };

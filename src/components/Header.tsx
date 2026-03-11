@@ -1,4 +1,4 @@
-import { Recycle, Menu, X, User, LogOut, Trophy, Heart, ShieldCheck } from 'lucide-react';
+import { Recycle, Menu, X, User, LogOut, Trophy, Heart, ShieldCheck, ScanLine } from 'lucide-react';
 import DeliveryRobotIcon from '@/components/icons/DeliveryRobotIcon';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';

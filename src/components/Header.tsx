@@ -56,7 +56,7 @@ const Header = () => {
               <Recycle className="w-6 h-6 text-primary-foreground" />
             </div>
             <span className="font-display font-bold text-xl text-foreground">
-              CANDO
+              CanDo
             </span>
           </Link>
 

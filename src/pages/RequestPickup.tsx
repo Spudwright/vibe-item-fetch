@@ -432,10 +432,10 @@ const RequestPickup = () => {
                   variant="eco"
                   size="xl"
                   className="w-full mt-6"
-                  disabled={!consentLocation || !agreeTerms}
+                  disabled={!consentLocation || !agreeTerms || submitting}
                 >
                   <CheckCircle2 className="w-5 h-5" />
-                  Submit Pickup Request
+                  {submitting ? 'Submitting...' : 'Submit Pickup Request'}
                 </Button>
               </div>
             </form>

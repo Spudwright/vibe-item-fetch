@@ -250,6 +250,50 @@ export type Database = {
         }
         Relationships: []
       }
+      scan_logs: {
+        Row: {
+          barcode: string
+          crv_eligible: boolean
+          id: string
+          product_brand: string | null
+          product_category: string | null
+          product_size: string | null
+          product_title: string | null
+          scanned_at: string
+          user_id: string | null
+        }
+        Insert: {
+          barcode: string
+          crv_eligible?: boolean
+          id?: string
+          product_brand?: string | null
+          product_category?: string | null
+          product_size?: string | null
+          product_title?: string | null
+          scanned_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          barcode?: string
+          crv_eligible?: boolean
+          id?: string
+          product_brand?: string | null
+          product_category?: string | null
+          product_size?: string | null
+          product_title?: string | null
+          scanned_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scan_logs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

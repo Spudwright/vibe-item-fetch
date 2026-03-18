@@ -28,7 +28,9 @@ import PointsBreakdown from '@/components/PointsBreakdown';
 
 const RequestPickup = () => {
   const { toast } = useToast();
-  const [items, setItems] = useState<CRVItem[]>([
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [submitting, setSubmitting] = useState(false);
     { id: '1', description: '', materialType: 'aluminum', sizeOz: 12, quantity: 1 },
   ]);
   const [address, setAddress] = useState('');

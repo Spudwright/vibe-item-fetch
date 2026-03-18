@@ -76,6 +76,7 @@ const Admin = () => {
   const [locationData, setLocationData] = useState<LocationData[]>([]);
   const [userLevels, setUserLevels] = useState<UserLevel[]>([]);
   const [recentPickups, setRecentPickups] = useState<any[]>([]);
+  const [scanLogs, setScanLogs] = useState<any[]>([]);
 
   useEffect(() => {
     const checkAdminAndLoadData = async () => {

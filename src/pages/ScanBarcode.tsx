@@ -69,8 +69,24 @@ const ScanBarcode = () => {
     return () => stopCamera();
   }, [stopCamera]);
 
+  const logScan = async (barcode: string, eligible: boolean, product: ProductInfo | null) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      await supabase.from('scan_logs').insert({
+        user_id: user?.id || null,
+        barcode,
+        product_title: product?.title || null,
+        product_brand: product?.brand || null,
+        product_category: product?.category || null,
+        product_size: product?.size || null,
+        crv_eligible: eligible,
+      } as any);
+    } catch {
+      // Silent fail — logging shouldn't block UX
+    }
+  };
+
   const lookupBarcode = async (barcode: string) => {
-    // Set initial result with loading state
     const localEligible = checkLocalEligibility(barcode);
     setResult({ barcode, eligible: localEligible, product: null, loading: true });
 
@@ -90,17 +106,16 @@ const ScanBarcode = () => {
           imageUrl: data.images?.[0] || null,
         };
 
-        // Determine eligibility: local prefix match OR beverage category from API
         const eligible = localEligible || isBeverageCategory(data.category, data.title);
-
         setResult({ barcode, eligible, product, loading: false });
+        logScan(barcode, eligible, product);
       } else {
-        // API didn't find it — use local check only
         setResult({ barcode, eligible: localEligible, product: null, loading: false });
+        logScan(barcode, localEligible, null);
       }
     } catch {
-      // Lookup failed — fall back to local check
       setResult({ barcode, eligible: localEligible, product: null, loading: false });
+      logScan(barcode, localEligible, null);
     }
   };
 
@@ -157,6 +172,7 @@ const ScanBarcode = () => {
     if (!manualCode.trim()) return;
     if (!isValidUPC(manualCode)) {
       setResult({ barcode: manualCode, eligible: false, product: null, loading: false });
+      logScan(manualCode, false, null);
       return;
     }
     lookupBarcode(manualCode);

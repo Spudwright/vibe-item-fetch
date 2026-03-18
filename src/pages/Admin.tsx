@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Users, Package, TrendingUp, MapPin, Recycle, DollarSign, 
-  BarChart3, PieChart, Calendar, ShieldCheck, AlertTriangle
+  BarChart3, PieChart, Calendar, ShieldCheck, AlertTriangle, ScanLine
 } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';

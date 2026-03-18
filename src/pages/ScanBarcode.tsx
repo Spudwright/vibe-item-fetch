@@ -114,8 +114,8 @@ const ScanBarcode = () => {
         logScan(barcode, localEligible, null);
       }
     } catch {
-      // Lookup failed — fall back to local check
       setResult({ barcode, eligible: localEligible, product: null, loading: false });
+      logScan(barcode, localEligible, null);
     }
   };
 

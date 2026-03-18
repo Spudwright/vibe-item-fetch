@@ -867,6 +867,62 @@ const Admin = () => {
                   </Card>
                 </div>
               </TabsContent>
+              {/* Scan Logs Tab */}
+              <TabsContent value="scans" className="space-y-6">
+                <Card className="shadow-card">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <ScanLine className="w-5 h-5 text-primary" />
+                      Recent Barcode Scans
+                    </CardTitle>
+                    <CardDescription>All user barcode scans with product details and eligibility</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {loading ? (
+                      <Skeleton className="h-64 w-full" />
+                    ) : scanLogs.length === 0 ? (
+                      <p className="text-center text-muted-foreground py-8">No scans recorded yet.</p>
+                    ) : (
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b border-border">
+                              <th className="text-left py-3 px-2 text-muted-foreground font-medium">Time</th>
+                              <th className="text-left py-3 px-2 text-muted-foreground font-medium">User ID</th>
+                              <th className="text-left py-3 px-2 text-muted-foreground font-medium">Barcode</th>
+                              <th className="text-left py-3 px-2 text-muted-foreground font-medium">Product</th>
+                              <th className="text-left py-3 px-2 text-muted-foreground font-medium">Brand</th>
+                              <th className="text-left py-3 px-2 text-muted-foreground font-medium">Size</th>
+                              <th className="text-left py-3 px-2 text-muted-foreground font-medium">CRV</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {scanLogs.map((log: any) => (
+                              <tr key={log.id} className="border-b border-border/50 hover:bg-muted/30">
+                                <td className="py-2 px-2 text-foreground whitespace-nowrap">
+                                  {format(new Date(log.scanned_at), 'MMM d, h:mm a')}
+                                </td>
+                                <td className="py-2 px-2 text-muted-foreground font-mono text-xs">
+                                  {log.user_id ? log.user_id.slice(0, 8) + '…' : 'Anonymous'}
+                                </td>
+                                <td className="py-2 px-2 text-foreground font-mono">{log.barcode}</td>
+                                <td className="py-2 px-2 text-foreground">{log.product_title || '—'}</td>
+                                <td className="py-2 px-2 text-muted-foreground">{log.product_brand || '—'}</td>
+                                <td className="py-2 px-2 text-muted-foreground">{log.product_size || '—'}</td>
+                                <td className="py-2 px-2">
+                                  <Badge variant={log.crv_eligible ? 'default' : 'outline'} className={log.crv_eligible ? 'bg-primary/10 text-primary border-primary/20' : ''}>
+                                    {log.crv_eligible ? 'Eligible' : 'Not Eligible'}
+                                  </Badge>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
             </Tabs>
           </div>
         </div>

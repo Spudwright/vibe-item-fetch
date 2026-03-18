@@ -1,66 +1,47 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { ScanLine, Camera, CheckCircle2, XCircle, RotateCcw, Keyboard } from 'lucide-react';
+import { ScanLine, Camera, CheckCircle2, XCircle, RotateCcw, Keyboard, Loader2 } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { isValidUPC } from '@/lib/crv-utils';
+import { supabase } from '@/integrations/supabase/client';
 
 // Known CRV-eligible UPC prefixes (common beverage manufacturers)
 const CRV_ELIGIBLE_PREFIXES = [
-  '012000', // Pepsi / Gatorade
-  '049000', // Coca-Cola
-  '078000', // Dr Pepper / Snapple
-  '018200', // Nestle Waters
-  '041800', // Monster Energy
-  '085239', // Red Bull
-  '016000', // General Mills (some beverages)
-  '024100', // Ocean Spray
-  '038900', // Tropicana
-  '048500', // Arizona Beverages
-  '072140', // Fiji Water
-  '073360', // Dasani
-  '070847', // La Croix
-  '036632', // Body Armor
-  '081871', // Celsius
-  '052000', // Campbell's (V8)
-  '050700', // Minute Maid
+  '012000', '049000', '078000', '018200', '041800', '085239',
+  '016000', '024100', '038900', '048500', '072140', '073360',
+  '070847', '036632', '081871', '052000', '050700',
 ];
+
+type ProductInfo = {
+  title: string | null;
+  brand: string | null;
+  category: string | null;
+  size: string | null;
+  imageUrl: string | null;
+};
 
 type ScanResult = {
   barcode: string;
   eligible: boolean;
-  productName?: string;
+  product: ProductInfo | null;
+  loading: boolean;
 } | null;
 
-const checkCRVEligibility = (barcode: string): { eligible: boolean; productName?: string } => {
+const isBeverageCategory = (category: string | null, title: string | null): boolean => {
+  const beverageKeywords = [
+    'beverage', 'drink', 'soda', 'water', 'juice', 'tea', 'coffee',
+    'energy', 'cola', 'lemonade', 'sparkling', 'beer', 'wine',
+    'kombucha', 'smoothie', 'milk', 'shake', 'sport', 'electrolyte',
+  ];
+  const combined = `${category || ''} ${title || ''}`.toLowerCase();
+  return beverageKeywords.some(kw => combined.includes(kw));
+};
+
+const checkLocalEligibility = (barcode: string): boolean => {
   const prefix = barcode.substring(0, 6);
-  
-  const knownProducts: Record<string, { name: string; eligible: boolean }> = {
-    '012000001611': { name: 'Pepsi Cola 12oz Can', eligible: true },
-    '049000006346': { name: 'Coca-Cola Classic 12oz Can', eligible: true },
-    '049000042566': { name: 'Sprite 12oz Can', eligible: true },
-    '012000161612': { name: 'Gatorade 20oz Bottle', eligible: true },
-    '078000113228': { name: 'Dr Pepper 12oz Can', eligible: true },
-    '041800102006': { name: 'Monster Energy 16oz Can', eligible: true },
-    '085239802168': { name: 'Red Bull 8.4oz Can', eligible: true },
-    '048500202678': { name: 'Arizona Iced Tea 23oz Can', eligible: true },
-    '070847811169': { name: 'La Croix Sparkling Water 12oz', eligible: true },
-    '072140002169': { name: 'Fiji Water 500ml Bottle', eligible: true },
-    '036632070159': { name: 'BodyArmor Sports Drink 16oz', eligible: true },
-    '081871313131': { name: 'Celsius Energy Drink 12oz', eligible: true },
-    '018200001017': { name: 'Arrowhead Spring Water 16.9oz', eligible: true },
-  };
-
-  if (knownProducts[barcode]) {
-    return knownProducts[barcode];
-  }
-
-  if (CRV_ELIGIBLE_PREFIXES.includes(prefix)) {
-    return { eligible: true, productName: 'Beverage Container (recognized manufacturer)' };
-  }
-
-  return { eligible: false };
+  return CRV_ELIGIBLE_PREFIXES.includes(prefix);
 };
 
 const ScanBarcode = () => {
@@ -88,6 +69,41 @@ const ScanBarcode = () => {
     return () => stopCamera();
   }, [stopCamera]);
 
+  const lookupBarcode = async (barcode: string) => {
+    // Set initial result with loading state
+    const localEligible = checkLocalEligibility(barcode);
+    setResult({ barcode, eligible: localEligible, product: null, loading: true });
+
+    try {
+      const { data, error } = await supabase.functions.invoke('lookup-upc', {
+        body: { barcode },
+      });
+
+      if (error) throw error;
+
+      if (data?.found) {
+        const product: ProductInfo = {
+          title: data.title,
+          brand: data.brand,
+          category: data.category,
+          size: data.size,
+          imageUrl: data.images?.[0] || null,
+        };
+
+        // Determine eligibility: local prefix match OR beverage category from API
+        const eligible = localEligible || isBeverageCategory(data.category, data.title);
+
+        setResult({ barcode, eligible, product, loading: false });
+      } else {
+        // API didn't find it — use local check only
+        setResult({ barcode, eligible: localEligible, product: null, loading: false });
+      }
+    } catch {
+      // Lookup failed — fall back to local check
+      setResult({ barcode, eligible: localEligible, product: null, loading: false });
+    }
+  };
+
   const startCamera = async () => {
     setMode('camera');
     setScanning(true);
@@ -105,7 +121,6 @@ const ScanBarcode = () => {
         await videoRef.current.play();
       }
 
-      // Use BarcodeDetector API if available
       if ('BarcodeDetector' in window) {
         const detector = new (window as any).BarcodeDetector({ formats: ['upc_a', 'upc_e', 'ean_13', 'ean_8'] });
         intervalRef.current = setInterval(async () => {
@@ -114,7 +129,9 @@ const ScanBarcode = () => {
               const barcodes = await detector.detect(videoRef.current);
               if (barcodes.length > 0) {
                 const code = barcodes[0].rawValue;
-                handleBarcodeDetected(code);
+                stopCamera();
+                setScanning(false);
+                lookupBarcode(code);
               }
             } catch {
               // Detection frame failed, continue
@@ -122,7 +139,6 @@ const ScanBarcode = () => {
           }
         }, 300);
       } else {
-        // No BarcodeDetector support — show manual fallback after a moment
         setTimeout(() => {
           setCameraError('Your browser doesn\'t support automatic barcode detection. Please enter the code manually.');
           setScanning(false);
@@ -137,21 +153,13 @@ const ScanBarcode = () => {
     }
   };
 
-  const handleBarcodeDetected = (barcode: string) => {
-    stopCamera();
-    setScanning(false);
-    const { eligible, productName } = checkCRVEligibility(barcode);
-    setResult({ barcode, eligible, productName });
-  };
-
   const handleManualSubmit = () => {
     if (!manualCode.trim()) return;
     if (!isValidUPC(manualCode)) {
-      setResult({ barcode: manualCode, eligible: false, productName: undefined });
+      setResult({ barcode: manualCode, eligible: false, product: null, loading: false });
       return;
     }
-    const { eligible, productName } = checkCRVEligibility(manualCode);
-    setResult({ barcode: manualCode, eligible, productName });
+    lookupBarcode(manualCode);
   };
 
   const resetScanner = () => {
@@ -185,15 +193,42 @@ const ScanBarcode = () => {
             {/* Result Display */}
             {result && (
               <div className="mb-6 animate-fade-in">
-                {result.eligible ? (
+                {result.loading ? (
+                  <div className="bg-card rounded-2xl shadow-card p-8 text-center">
+                    <Loader2 className="w-10 h-10 text-primary animate-spin mx-auto mb-4" />
+                    <p className="text-sm text-muted-foreground">Looking up product info…</p>
+                  </div>
+                ) : result.eligible ? (
                   <div className="bg-card rounded-2xl shadow-card border-2 border-primary p-6 text-center">
                     <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center mb-4">
                       <CheckCircle2 className="w-10 h-10 text-primary" />
                     </div>
                     <h2 className="font-display text-xl font-bold text-foreground mb-1">CRV Eligible!</h2>
-                    {result.productName && (
-                      <p className="text-sm text-muted-foreground mb-2">{result.productName}</p>
+
+                    {/* Product details */}
+                    {result.product ? (
+                      <div className="mb-4 space-y-1">
+                        {result.product.imageUrl && (
+                          <img
+                            src={result.product.imageUrl}
+                            alt={result.product.title || 'Product'}
+                            className="w-20 h-20 object-contain mx-auto rounded-lg mb-2"
+                          />
+                        )}
+                        {result.product.title && (
+                          <p className="text-sm font-medium text-foreground">{result.product.title}</p>
+                        )}
+                        {result.product.brand && (
+                          <p className="text-xs text-muted-foreground">Brand: {result.product.brand}</p>
+                        )}
+                        {result.product.size && (
+                          <p className="text-xs text-muted-foreground">Size: {result.product.size}</p>
+                        )}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground mb-2">Beverage Container (recognized manufacturer)</p>
                     )}
+
                     <p className="text-xs text-muted-foreground mb-4">UPC: {result.barcode}</p>
                     <div className="flex gap-3">
                       <Button variant="eco" className="flex-1" onClick={() => window.location.href = '/request'}>
@@ -210,6 +245,12 @@ const ScanBarcode = () => {
                       <XCircle className="w-10 h-10 text-destructive" />
                     </div>
                     <h2 className="font-display text-xl font-bold text-foreground mb-1">Not CRV Eligible</h2>
+
+                    {/* Still show product info if found */}
+                    {result.product?.title && (
+                      <p className="text-sm font-medium text-foreground mb-1">{result.product.title}</p>
+                    )}
+
                     <p className="text-sm text-muted-foreground mb-2">
                       This container doesn't appear to qualify for California CRV redemption.
                     </p>
@@ -243,12 +284,7 @@ const ScanBarcode = () => {
             {!result && mode === 'camera' && (
               <div className="bg-card rounded-2xl shadow-card overflow-hidden">
                 <div className="relative aspect-[4/3] bg-black">
-                  <video
-                    ref={videoRef}
-                    className="w-full h-full object-cover"
-                    playsInline
-                    muted
-                  />
+                  <video ref={videoRef} className="w-full h-full object-cover" playsInline muted />
                   {scanning && (
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="w-48 h-48 border-2 border-primary rounded-xl relative">

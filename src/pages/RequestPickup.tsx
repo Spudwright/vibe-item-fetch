@@ -33,6 +33,7 @@ const RequestPickup = () => {
   const [items, setItems] = useState<CRVItem[]>([
     { id: '1', description: '', materialType: 'aluminum', sizeOz: 12, quantity: 1 },
   ]);
+  const [submitting, setSubmitting] = useState(false);
   const [address, setAddress] = useState('');
   const [notes, setNotes] = useState('');
   const [consentLocation, setConsentLocation] = useState(false);

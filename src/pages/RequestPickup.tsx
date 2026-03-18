@@ -263,15 +263,6 @@ const RequestPickup = () => {
                   Add More Items
                 </Button>
 
-                {/* Minimum quantity notice */}
-                {totalQuantity < MINIMUM_ITEMS && (
-                  <div className="mt-4 p-3 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 flex items-center gap-2">
-                    <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
-                    <p className="text-sm text-amber-700 dark:text-amber-300">
-                      Minimum {MINIMUM_ITEMS} items required. You have <strong>{totalQuantity}</strong> — need <strong>{MINIMUM_ITEMS - totalQuantity}</strong> more.
-                    </p>
-                  </div>
-                )}
 
                 {/* Estimate with Points */}
                 <div className="mt-6 p-4 rounded-xl gold-gradient">

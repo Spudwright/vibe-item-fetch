@@ -87,16 +87,6 @@ const RequestPickup = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Check minimum quantity requirement
-    if (totalQuantity < MINIMUM_ITEMS) {
-      toast({
-        variant: "destructive",
-        title: "Minimum Not Met",
-        description: `You need at least ${MINIMUM_ITEMS} items for a pickup. You currently have ${totalQuantity}.`,
-      });
-      return;
-    }
     
     if (!consentLocation || !agreeTerms) {
       toast({

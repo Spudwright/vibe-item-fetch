@@ -276,7 +276,7 @@ const RequestPickup = () => {
                     <div className="text-right text-xs text-foreground/70">
                       <p>Full CRV: {formatCurrency(fullCRV)}</p>
                       <p>Fee: {(feeRate * 100).toFixed(0)}%</p>
-                      <p>Items: {totalQuantity}/{MINIMUM_ITEMS} min</p>
+                      <p>Items: {totalQuantity}</p>
                     </div>
                   </div>
                   {/* Points Preview */}

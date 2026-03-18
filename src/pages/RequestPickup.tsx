@@ -21,7 +21,7 @@ import { calculateItemPoints, formatPoints } from '@/lib/gamification';
 import { useToast } from '@/hooks/use-toast';
 import PointsBreakdown from '@/components/PointsBreakdown';
 
-const MINIMUM_ITEMS = 25; // Minimum number of cans/bottles required for pickup
+
 
 const RequestPickup = () => {
   const { toast } = useToast();

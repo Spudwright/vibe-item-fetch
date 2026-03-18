@@ -172,6 +172,7 @@ const ScanBarcode = () => {
     if (!manualCode.trim()) return;
     if (!isValidUPC(manualCode)) {
       setResult({ barcode: manualCode, eligible: false, product: null, loading: false });
+      logScan(manualCode, false, null);
       return;
     }
     lookupBarcode(manualCode);

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ScanLine, Plus, Trash2, MapPin, CheckCircle2, AlertCircle, Zap } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -19,15 +20,20 @@ import {
 } from '@/lib/crv-utils';
 import { calculateItemPoints, formatPoints } from '@/lib/gamification';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 import PointsBreakdown from '@/components/PointsBreakdown';
 
 
 
 const RequestPickup = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [items, setItems] = useState<CRVItem[]>([
     { id: '1', description: '', materialType: 'aluminum', sizeOz: 12, quantity: 1 },
   ]);
+  const [submitting, setSubmitting] = useState(false);
   const [address, setAddress] = useState('');
   const [notes, setNotes] = useState('');
   const [consentLocation, setConsentLocation] = useState(false);
@@ -85,9 +91,19 @@ const RequestPickup = () => {
   // Calculate total quantity of items
   const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!user) {
+      toast({
+        variant: "destructive",
+        title: "Login Required",
+        description: "Please sign in to request a pickup.",
+      });
+      navigate('/auth');
+      return;
+    }
+
     if (!consentLocation || !agreeTerms) {
       toast({
         variant: "destructive",
@@ -118,10 +134,43 @@ const RequestPickup = () => {
       }
     }
 
+    setSubmitting(true);
+
+    const { data, error } = await supabase
+      .from('pickups')
+      .insert({
+        user_id: user.id,
+        pickup_address: address.trim(),
+        items: items.map(item => ({
+          description: item.description,
+          materialType: item.materialType,
+          sizeOz: item.sizeOz,
+          quantity: item.quantity,
+          barcode: item.barcode || null,
+        })),
+        estimated_crv: fullCRV,
+        points_earned: totalPoints,
+      })
+      .select()
+      .single();
+
+    setSubmitting(false);
+
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Submission Failed",
+        description: error.message,
+      });
+      return;
+    }
+
     toast({
       title: "Pickup Requested!",
-      description: "Your request has been submitted. A driver will accept it soon.",
+      description: "Your request has been submitted. You can track its status now.",
     });
+
+    navigate(`/track/${data.id}`);
   };
 
   const fullCRV = calculateFullCRV(items);
@@ -383,10 +432,10 @@ const RequestPickup = () => {
                   variant="eco"
                   size="xl"
                   className="w-full mt-6"
-                  disabled={!consentLocation || !agreeTerms}
+                  disabled={!consentLocation || !agreeTerms || submitting}
                 >
                   <CheckCircle2 className="w-5 h-5" />
-                  Submit Pickup Request
+                  {submitting ? 'Submitting...' : 'Submit Pickup Request'}
                 </Button>
               </div>
             </form>

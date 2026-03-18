@@ -91,9 +91,19 @@ const RequestPickup = () => {
   // Calculate total quantity of items
   const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!user) {
+      toast({
+        variant: "destructive",
+        title: "Login Required",
+        description: "Please sign in to request a pickup.",
+      });
+      navigate('/auth');
+      return;
+    }
+
     if (!consentLocation || !agreeTerms) {
       toast({
         variant: "destructive",
@@ -124,10 +134,43 @@ const RequestPickup = () => {
       }
     }
 
+    setSubmitting(true);
+
+    const { data, error } = await supabase
+      .from('pickups')
+      .insert({
+        user_id: user.id,
+        pickup_address: address.trim(),
+        items: items.map(item => ({
+          description: item.description,
+          materialType: item.materialType,
+          sizeOz: item.sizeOz,
+          quantity: item.quantity,
+          barcode: item.barcode || null,
+        })),
+        estimated_crv: fullCRV,
+        points_earned: totalPoints,
+      })
+      .select()
+      .single();
+
+    setSubmitting(false);
+
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Submission Failed",
+        description: error.message,
+      });
+      return;
+    }
+
     toast({
       title: "Pickup Requested!",
-      description: "Your request has been submitted. A driver will accept it soon.",
+      description: "Your request has been submitted. You can track its status now.",
     });
+
+    navigate(`/track/${data.id}`);
   };
 
   const fullCRV = calculateFullCRV(items);

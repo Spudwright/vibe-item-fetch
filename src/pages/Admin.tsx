@@ -440,6 +440,10 @@ const Admin = () => {
                   <Calendar className="w-4 h-4 mr-2" />
                   Trends
                 </TabsTrigger>
+                <TabsTrigger value="scans" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  <ScanLine className="w-4 h-4 mr-2" />
+                  Scan Logs
+                </TabsTrigger>
               </TabsList>
 
               {/* Overview Tab */}

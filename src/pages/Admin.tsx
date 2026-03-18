@@ -118,6 +118,7 @@ const Admin = () => {
         pickupsResult,
         donationsResult,
         recentPickupsResult,
+        scanLogsResult,
       ] = await Promise.all([
         supabase.from('profiles').select('*'),
         supabase.from('pickups').select('*'),

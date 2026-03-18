@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ScanLine, Plus, Trash2, MapPin, CheckCircle2, AlertCircle, Zap } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -19,6 +20,8 @@ import {
 } from '@/lib/crv-utils';
 import { calculateItemPoints, formatPoints } from '@/lib/gamification';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 import PointsBreakdown from '@/components/PointsBreakdown';
 
 

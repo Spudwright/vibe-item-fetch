@@ -123,6 +123,7 @@ const Admin = () => {
         supabase.from('pickups').select('*'),
         supabase.from('donations').select('amount_cents'),
         supabase.from('pickups').select('*').order('created_at', { ascending: false }).limit(10),
+        supabase.from('scan_logs').select('*').order('scanned_at', { ascending: false }).limit(50),
       ]);
 
       const profiles = profilesResult.data || [];

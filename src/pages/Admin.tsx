@@ -232,6 +232,7 @@ const Admin = () => {
 
       // Recent pickups
       setRecentPickups(recentPickupsResult.data || []);
+      setScanLogs((scanLogsResult as any).data || []);
 
     } catch (error) {
       console.error('Error loading admin data:', error);

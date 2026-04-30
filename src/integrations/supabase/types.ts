@@ -250,6 +250,53 @@ export type Database = {
         }
         Relationships: []
       }
+      robot_webhook_events: {
+        Row: {
+          id: string
+          job_id: string
+          next_success_step_type: string | null
+          payload: Json
+          pickup_id: string | null
+          point_id: string | null
+          point_name: string | null
+          received_at: string
+          step_type: string | null
+          trigger: string
+        }
+        Insert: {
+          id?: string
+          job_id: string
+          next_success_step_type?: string | null
+          payload: Json
+          pickup_id?: string | null
+          point_id?: string | null
+          point_name?: string | null
+          received_at?: string
+          step_type?: string | null
+          trigger: string
+        }
+        Update: {
+          id?: string
+          job_id?: string
+          next_success_step_type?: string | null
+          payload?: Json
+          pickup_id?: string | null
+          point_id?: string | null
+          point_name?: string | null
+          received_at?: string
+          step_type?: string | null
+          trigger?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "robot_webhook_events_pickup_id_fkey"
+            columns: ["pickup_id"]
+            isOneToOne: false
+            referencedRelation: "pickups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       scan_logs: {
         Row: {
           barcode: string

@@ -22,6 +22,12 @@ interface Pickup {
   items: any;
   created_at: string;
   drone_id: string | null;
+  robot_job_id?: string | null;
+  robot_status?: string | null;
+  robot_bot_id?: string | null;
+  robot_tracker_url?: string | null;
+  robot_door_status?: string | null;
+  robot_battery?: number | null;
 }
 
 interface Drone {
@@ -41,6 +47,20 @@ const statusConfig: Record<string, { label: string; color: string }> = {
   cancelled: { label: 'Cancelled', color: 'bg-gray-100 text-gray-800' },
 };
 
+const robotStatusLabel: Record<string, string> = {
+  pending: 'Waiting for bot',
+  created: 'Bot job created',
+  assigned: 'Bot assigned',
+  en_route: 'Bot on the way',
+  at_pickup: 'Bot has arrived — please load',
+  loaded: 'Loaded — heading to drop-off',
+  en_route_dropoff: 'Heading to drop-off',
+  at_dropoff: 'At redemption center',
+  delivered: 'Delivered',
+  cancelled: 'Cancelled',
+  failed: 'Bot reported a problem',
+};
+
 const TrackPickup = () => {
   const { pickupId } = useParams<{ pickupId: string }>();
   const navigate = useNavigate();
@@ -50,6 +70,7 @@ const TrackPickup = () => {
   const [pickup, setPickup] = useState<Pickup | null>(null);
   const [drone, setDrone] = useState<Drone | null>(null);
   const [loading, setLoading] = useState(true);
+  const [bayBusy, setBayBusy] = useState(false);
   const [mapboxToken, setMapboxToken] = useState<string | null>(
     localStorage.getItem('mapbox_token')
   );
@@ -186,6 +207,31 @@ const TrackPickup = () => {
 
   const status = statusConfig[pickup.status] || { label: pickup.status, color: 'bg-gray-100 text-gray-800' };
   const isTrackable = pickup.status === 'assigned' || pickup.status === 'in_transit';
+  const robotStatusText = pickup.robot_status
+    ? robotStatusLabel[pickup.robot_status] ?? pickup.robot_status
+    : null;
+  const trackerUrl = pickup.robot_tracker_url ?? null;
+  const showOpenBay = pickup.robot_status === 'at_pickup' && pickup.robot_door_status !== 'opened';
+  const showCloseBay = pickup.robot_status === 'at_pickup' && pickup.robot_door_status === 'opened';
+
+  const callBayControl = async (action: 'open' | 'close') => {
+    setBayBusy(true);
+    const { error } = await supabase.functions.invoke('bay-control', {
+      body: { pickup_id: pickup.id, action },
+    });
+    setBayBusy(false);
+    if (error) {
+      toast({
+        variant: 'destructive',
+        title: action === 'open' ? 'Could not open cargo bay' : 'Could not close cargo bay',
+        description: error.message,
+      });
+      return;
+    }
+    toast({
+      title: action === 'open' ? 'Cargo bay opened' : 'Cargo bay closed',
+    });
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -205,13 +251,51 @@ const TrackPickup = () => {
           <div className="lg:col-span-2">
             <Card className="h-[500px]">
               <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2">
-                  <DeliveryRobotIcon size={20} className="text-primary" />
-                  Live Robot Tracking
+                <CardTitle className="flex items-center gap-2 justify-between">
+                  <span className="flex items-center gap-2">
+                    <DeliveryRobotIcon size={20} className="text-primary" />
+                    Live Robot Tracking
+                    {robotStatusText && (
+                      <Badge variant="outline" className="ml-2 text-xs">
+                        {robotStatusText}
+                      </Badge>
+                    )}
+                  </span>
+                  <span className="flex gap-2">
+                    {showOpenBay && (
+                      <Button size="sm" onClick={() => callBayControl('open')} disabled={bayBusy}>
+                        Open Cargo Bay
+                      </Button>
+                    )}
+                    {showCloseBay && (
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        onClick={() => callBayControl('close')}
+                        disabled={bayBusy}
+                      >
+                        Close Cargo Bay
+                      </Button>
+                    )}
+                  </span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="h-[calc(100%-60px)]">
-                {isTrackable ? (
+                {trackerUrl ? (
+                  <iframe
+                    src={trackerUrl}
+                    title="Robot.com live tracker"
+                    className="w-full h-full rounded-lg border-0"
+                    allow="geolocation"
+                  />
+                ) : pickup.robot_job_id ? (
+                  <div className="h-full flex items-center justify-center bg-muted rounded-lg">
+                    <div className="text-center p-6">
+                      <DeliveryRobotIcon size={48} className="text-muted-foreground mx-auto mb-4" />
+                      <p className="text-muted-foreground">Loading live tracker…</p>
+                    </div>
+                  </div>
+                ) : isTrackable ? (
                   <DroneMap
                     droneLocation={drone?.lat && drone?.lng ? { lat: drone.lat, lng: drone.lng } : null}
                     pickupLocation={pickup.pickup_lat && pickup.pickup_lng ? { lat: pickup.pickup_lat, lng: pickup.pickup_lng } : null}
@@ -223,8 +307,8 @@ const TrackPickup = () => {
                     <div className="text-center p-6">
                       <DeliveryRobotIcon size={48} className="text-muted-foreground mx-auto mb-4" />
                       <p className="text-muted-foreground">
-                        {pickup.status === 'pending' 
-                          ? 'Waiting for a robot to be assigned...'
+                        {pickup.status === 'pending'
+                          ? 'Waiting for a robot to be assigned…'
                           : pickup.status === 'completed'
                           ? 'Pickup completed!'
                           : 'Tracking not available for this status.'}

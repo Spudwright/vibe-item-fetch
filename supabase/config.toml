@@ -1,1 +1,6 @@
 project_id = "pbxdpycpesxebpdgxhdx"
+
+# Robot.com calls this webhook directly — no Supabase JWT to validate.
+# The path-segment secret (ROBOT_WEBHOOK_SECRET) is the auth.
+[functions.robot-webhook]
+verify_jwt = false

@@ -170,6 +170,15 @@ const RequestPickup = () => {
       description: "Your request has been submitted. You can track its status now.",
     });
 
+    // Fire-and-forget dispatch to Robot.com. Tracking page polls for tracker URL.
+    supabase.functions
+      .invoke('dispatch-pickup', { body: { pickup_id: data.id } })
+      .then(({ error: dispatchErr }) => {
+        if (dispatchErr) {
+          console.error('dispatch-pickup failed', dispatchErr);
+        }
+      });
+
     navigate(`/track/${data.id}`);
   };
 
